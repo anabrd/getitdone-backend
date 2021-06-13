@@ -3,13 +3,18 @@ const logs = require('../model/logs');
 
 // Add new Task
 exports.newTask = async (req, res) => {
-    const newTask = new tasks({...req.body, userId: req.userId});
-    await newTask.save((err, docs) => {
+
+    let collectionLength;
+    await tasks.find({userId: req.userId}, async (err, docs) => {
+        collectionLength = docs.length;
+        const newTask = new tasks({...req.body, userId: req.userId, orderId: collectionLength});
+        await newTask.save((err, docs) => {
+        console.log(collectionLength, newTask)
         if (err) {
             console.log(err);
             res.send({
                 status: "failed", 
-                message: `There was an error in processing. Please try again.`, 
+                message: "There was an error in processing. Please try again later.", 
                 data: err
             });
         } else {
@@ -21,6 +26,7 @@ exports.newTask = async (req, res) => {
                 data: docs});
             }
         })
+    })
 };
 
 // Get all tasks
@@ -44,7 +50,6 @@ exports.editTaskStatus = (req, res) => {
     console.log(task)
 
     tasks.findByIdAndUpdate(id, task, (err, doc) => {
-        console.log("are we in?")
         if (err) {
             res.send({staus: "failed", message:"Could not edit task. Please try again."});
             console.log(err);
@@ -105,4 +110,24 @@ exports.deleteTask = (req, res) => {
             console.log(doc)
         }
     })
+}
+
+exports.editOrder = (req, res) => {
+    console.log(req.body);
+    const reorderedTasks = req.body;
+
+    reorderedTasks.forEach(async task => {
+        await tasks.findByIdAndUpdate(task._id, task, (err, doc) => {
+            if (err) {
+                //res.send({staus: "failed", message:"Could not edit task. Please try again."});
+                console.log(err);
+            } else {
+                /*   res.send({
+                    status: "success", 
+                    message:`Changes noted!`
+                }); */
+                console.log(doc);
+            }
+    })
+})
 }

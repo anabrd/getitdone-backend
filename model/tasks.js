@@ -13,6 +13,9 @@ const tasks = new mongoose.Schema({
     },
     userId: {
         type: String
+    },
+    orderId: {
+        type: String
     }
 });
 
