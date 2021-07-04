@@ -5,7 +5,6 @@ require("dotenv").config()
 const connectDB = require('./config/db');
 const tasks = require('./router/tasks');
 const auth = require('./router/auth');
-const path = require('path');
 
 
 app.listen(port, () => console.log(`Server started to run on port ${port}.`));

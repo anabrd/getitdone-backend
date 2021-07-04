@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
 }
 
 exports.login = (req, res) => {
-    users.findOne({email: req.body.email}, (err, doc) => {    
+    users.findOne({email: req.body.email}, async (err, doc) => {    
         if (err) {
             res.send({status: "failed", message: "An error occurred. Please try again later."});
         } else if (doc == null) {
