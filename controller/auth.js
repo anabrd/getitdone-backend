@@ -33,8 +33,18 @@ exports.login = (req, res) => {
             res.send({status: "failed", message: "Wrong email or password."});
         } else {
             // Create jwt
-            const token = jwt.sign({id: doc._id}, jwtSKey, {expiresIn: "1d"});
-            res.send({status: "success", message: "User logged in successfully.", data: token});
+            const match = await bcrypt.compare(pass, doc.pass);
+
+            if(match)  {
+                //Create the token and send to FE
+                const token = jwt.sign({id:doc._id}, jwtSKey, {expiresIn: '1d'});
+                console.log(doc);
+                res.send(({status:'success', message: 'User logged in successfully', token}));
+            } else {
+                res.send({status:'failed', message: `There's an error, please try again later.`});
+            }
+            /* const token = jwt.sign({id: doc._id}, jwtSKey, {expiresIn: "1d"});
+            res.send({status: "success", message: "User logged in successfully.", data: token}); */
         }
     })
 }
