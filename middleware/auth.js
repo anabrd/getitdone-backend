@@ -6,7 +6,6 @@ exports.checkAuth = async (req, res, next) => {
     if (!token) {
         res.status(401).send({status: "failed", message:"Absent token."});
     } else {
-
         try {
             await jwt.verify(token, jwtSKey, (fail, decodedPayLoad) => {
                 if (fail) {
