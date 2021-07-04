@@ -26,6 +26,8 @@ exports.register = async (req, res) => {
 }
 
 exports.login = (req, res) => {
+
+    let {email, pass} = req.body;
     users.findOne({email: req.body.email}, async (err, doc) => {    
         if (err) {
             res.send({status: "failed", message: "An error occurred. Please try again later."});
@@ -33,15 +35,16 @@ exports.login = (req, res) => {
             res.send({status: "failed", message: "Wrong email or password."});
         } else {
             // Create jwt
+
             const match = await bcrypt.compare(pass, doc.pass);
 
-            if(match)  {
+            if (match)  {
                 //Create the token and send to FE
                 const token = jwt.sign({id:doc._id}, jwtSKey, {expiresIn: '1d'});
                 console.log(doc);
                 res.send(({status:'success', message: 'User logged in successfully', token}));
             } else {
-                res.send({status:'failed', message: `There's an error, please try again later.`});
+                res.send({status:'failed', message: `Wrong username and/or password.`});
             }
             /* const token = jwt.sign({id: doc._id}, jwtSKey, {expiresIn: "1d"});
             res.send({status: "success", message: "User logged in successfully.", data: token}); */
